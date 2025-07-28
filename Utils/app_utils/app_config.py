@@ -4,6 +4,8 @@
 # ─────────────────────────────────────────────────────
 # Basic Application Metadata
 # ─────────────────────────────────────────────────────
+import os
+import platform
 APP_NAME = "Stonehaven"
 VERSION = "0.0.1"
 LICENSE = "MIT"
@@ -25,6 +27,17 @@ BANNER = f"{APP_NAME} - Android Security Toolkit (v{VERSION})"
 DEFAULT_INPUT_DIR = "Input"
 DEFAULT_OUTPUT_DIR = "Output"
 DEFAULT_TOOL_DIR = "Utils\\Platform_Tools"
+
+# ADB executable path. Can be overridden with the STONEHAVEN_ADB_PATH
+# environment variable. Defaults to the bundled platform-tools on
+# Windows or the system "adb" for other platforms.
+
+ADB_PATH = os.environ.get(
+    "STONEHAVEN_ADB_PATH",
+    os.path.join("Utils", "Platform_Tools", "adb.exe")
+    if platform.system() == "Windows"
+    else "adb",
+)
 
 # ─────────────────────────────────────────────────────
 # Debug Settings

@@ -2,13 +2,12 @@
 # Provides core ADB command execution and essential device information access
 
 import subprocess
-import os
-import platform
+from Utils.app_utils.app_config import ADB_PATH
+from Utils.logging_utils import log_manager
 
 # ─────────────────────────────────────────────
 # ADB CONFIGURATION (Cross-Platform)
 # ─────────────────────────────────────────────
-ADB_PATH = os.path.join("Utils", "Platform_Tools", "adb.exe") if platform.system() == "Windows" else "adb"
 DEFAULT_VALUE = "Unknown"
 
 # ─────────────────────────────────────────────
@@ -30,12 +29,18 @@ def adb_shell(serial: str, command: str) -> str:
             [ADB_PATH, "-s", serial, "shell", command],
             capture_output=True,
             text=True,
-            timeout=6
+            timeout=6,
         )
+        if result.returncode != 0:
+            log_manager.log_warning(
+                f"ADB shell returned code {result.returncode} for {serial}: {command}"
+            )
         return result.stdout.strip() if result.returncode == 0 else DEFAULT_VALUE
     except subprocess.TimeoutExpired:
+        log_manager.log_exception(f"ADB shell timeout for {serial}: {command}")
         return "Timeout"
-    except Exception:
+    except Exception as e:
+        log_manager.log_exception(f"ADB shell failed for {serial}: {e}")
         return DEFAULT_VALUE
 
 # ─────────────────────────────────────────────
@@ -50,7 +55,8 @@ def get_adb_state(serial: str) -> str:
             timeout=4
         )
         return result.stdout.strip() or DEFAULT_VALUE
-    except Exception:
+    except Exception as e:
+        log_manager.log_exception(f"Failed to get ADB state for {serial}: {e}")
         return DEFAULT_VALUE
 
 def get_device_name(serial: str) -> str:

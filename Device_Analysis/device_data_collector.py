@@ -4,8 +4,9 @@
 from Device_Analysis import (
     device_inspector_core as core,
     device_inspector_security as sec,
-    device_inspector_network as net
+    device_inspector_network as net,
 )
+from Utils.logging_utils import log_manager
 
 def collect_full_device_info(base_device: dict) -> dict:
     """
@@ -119,5 +120,6 @@ def _safe_set(device: dict, function_map: dict, serial: str):
     for key, func in function_map.items():
         try:
             device[key] = func(serial)
-        except Exception:
+        except Exception as e:
             device[key] = "Unknown"
+            log_manager.log_exception(f"Failed to collect {key}: {e}")
