@@ -1,55 +1,89 @@
 @echo off
-setlocal
+setlocal ENABLEEXTENSIONS
 cls
-echo ====================================================
-echo       Stonehaven - Initial Setup Script
-echo ====================================================
 
-:: Check for adb.exe
+:: ============================================================
+::   Stonehaven - Initial Setup Script (ASCII Safe)
+:: ============================================================
+echo ============================================================
+echo         Stonehaven - Initial Setup and Environment Check
+echo ============================================================
+
+:: ------------------------------------------------------------
+:: Check: adb.exe
+:: ------------------------------------------------------------
+echo [*] Checking for adb.exe...
 if exist "Utils\Platform_Tools\adb.exe" (
-    echo [OK]     adb.exe found in Utils\Platform_Tools
+    echo [ OK ] adb.exe found in Utils\Platform_Tools
 ) else (
-    echo [ERROR]  adb.exe not found in Utils\Platform_Tools
-    echo          Please verify the Android platform-tools are installed correctly.
+    echo [FAIL] adb.exe not found in Utils\Platform_Tools
+    echo        Please verify Android platform-tools are installed correctly.
     pause
     exit /b 1
 )
 
-:: Check for sqlite3.exe
+:: ------------------------------------------------------------
+:: Check: sqlite3.exe
+:: ------------------------------------------------------------
+echo [*] Checking for sqlite3.exe...
 if exist "Utils\Platform_Tools\sqlite3.exe" (
-    echo [OK]     sqlite3.exe found in Utils\Platform_Tools
+    echo [ OK ] sqlite3.exe found in Utils\Platform_Tools
 ) else (
-    echo [ERROR]  sqlite3.exe not found in Utils\Platform_Tools
-    echo          Please ensure all required tools are present.
+    echo [FAIL] sqlite3.exe not found in Utils\Platform_Tools
+    echo        Please ensure all required tools are present.
     pause
     exit /b 1
 )
 
-:: Install Python dependencies
-echo.
-echo [*]     Installing required Python modules...
-pip install colorama
+:: ------------------------------------------------------------
+:: Python Check
+:: ------------------------------------------------------------
+echo [*] Verifying Python installation...
+python --version >nul 2>&1
 if errorlevel 1 (
-    echo [ERROR]  Failed to install colorama. Please install manually.
+    echo [FAIL] Python not detected. Please install Python 3.x and ensure it's in PATH.
     pause
     exit /b 1
+) else (
+    python --version
 )
 
-:: Test database connection
+:: ------------------------------------------------------------
+:: Install Python Modules
+:: ------------------------------------------------------------
 echo.
-echo [*]     Testing MySQL database connection...
+echo [*] Installing required Python packages...
+pip install colorama >nul 2>&1
+if errorlevel 1 (
+    echo [FAIL] Failed to install 'colorama'. Please install manually using:
+    echo        pip install colorama
+    pause
+    exit /b 1
+) else (
+    echo [ OK ] Python dependency 'colorama' installed or already present.
+)
+
+:: ------------------------------------------------------------
+:: Test: MySQL database connection
+:: ------------------------------------------------------------
+echo.
+echo [*] Testing MySQL database connection...
 python Database\db_conn.py --test
 if errorlevel 1 (
-    echo [ERROR]  Database connection test failed.
-    echo          Please verify MySQL service is running and credentials are correct.
+    echo [FAIL] Database connection test failed.
+    echo        Please check MySQL service and credentials in db_config.py.
     pause
     exit /b 1
 ) else (
-    echo [OK]     Database connection established successfully.
+    echo [ OK ] Database connection established successfully.
 )
 
+:: ------------------------------------------------------------
+:: Completion Notice
+:: ------------------------------------------------------------
 echo.
-echo ====================================================
-echo       Setup Complete. You may now run Stonehaven.
-echo ====================================================
+echo ============================================================
+echo   Setup Complete. You may now launch the application.
+echo ============================================================
 pause
+endlocal

@@ -3,33 +3,58 @@
 
 from . import cli_colors
 from . import app_config
+from . import display_utils
 
 def show_about():
-    """Display structured application metadata and purpose."""
+    """Display structured application metadata and purpose screen."""
     cli_colors.print_banner(f"About {app_config.APP_NAME}")
+    display_utils.print_thick_divider()
 
-    print("".ljust(60, "-"))
-    cli_colors.print_info("Application Name:")
-    print(f"  {app_config.APP_NAME}\n")
+    # ──────────────────────────────────────────────────────────
+    # Metadata Section
+    # ──────────────────────────────────────────────────────────
+    cli_colors.print_section("Application Metadata")
 
-    cli_colors.print_info("Version:")
-    print(f"  {app_config.VERSION}\n")
+    display_kv("Name", app_config.APP_NAME)
+    display_kv("Version", app_config.VERSION)
+    display_kv("License", app_config.LICENSE)
+    display_kv("Repository", app_config.REPOSITORY)
+    display_kv("Documentation", app_config.DOCUMENTATION)
 
-    cli_colors.print_info("License:")
-    print(f"  {app_config.LICENSE}\n")
+    display_utils.print_spacer()
 
-    cli_colors.print_info("Repository:")
-    print(f"  {app_config.REPOSITORY}\n")
+    # ──────────────────────────────────────────────────────────
+    # Purpose Section
+    # ──────────────────────────────────────────────────────────
+    cli_colors.print_section("Purpose")
 
-    cli_colors.print_info("Documentation:")
-    print(f"  {app_config.DOCUMENTATION}\n")
+    print("  Stonehaven is a modular command-line toolkit designed for")
+    print("  Android security research and application inspection. It is")
+    print("  built to support fieldwork, local audits, and CI-based scanning.")
+    print()
+    print("  Core capabilities include:")
+    print("   - Static inspection of APK files")
+    print("   - Android permission and manifest profiling")
+    print("   - Hash integrity verification (SHA256)")
+    print("   - Integration with ADB and platform-tools")
+    print("   - Modular design for extensibility")
 
-    cli_colors.print_info("Purpose:")
-    print("  Stonehaven is a modular command-line application designed")
-    print("  for security researchers and analysts. Its core functionality")
-    print("  includes static inspection of Android applications, permission")
-    print("  profiling, and hash-based integrity verification using ADB and")
-    print("  native Android platform tools.\n")
+    display_utils.print_spacer()
 
-    print("".ljust(60, "-"))
+    # ──────────────────────────────────────────────────────────
+    # Extra Section (Optional)
+    # ──────────────────────────────────────────────────────────
+    cli_colors.print_section("Session Information")
+    display_utils.print_timestamp("Session Time")
+
+    display_utils.print_spacer()
+    display_utils.print_thick_divider()
+    print()
+
+def display_kv(label: str, value: str):
+    """
+    Helper to print key-value metadata entries.
+    """
+    cli_colors.print_info(f"{label}:")
+    print(f"  {value}")
     print()

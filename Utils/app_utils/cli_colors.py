@@ -4,9 +4,9 @@
 
 import os
 
-# ─────────────────────────────────────────────────────
+# ------------------------------------------------------------
 # Global Color Toggle and Setup
-# ─────────────────────────────────────────────────────
+# ------------------------------------------------------------
 
 USE_COLORS = os.environ.get("NO_COLOR") is None
 
@@ -17,56 +17,71 @@ try:
 except Exception:
     USE_COLORS = False
 
-# Dummy fallback for colorless environments
+# Fallback if colorama is not available
 if not USE_COLORS:
     class _NoColor:
         def __getattr__(self, attr): return ""
     Fore = Back = Style = _NoColor()
 
-# ─────────────────────────────────────────────────────
-# Base Color Wrappers
-# ─────────────────────────────────────────────────────
+# ------------------------------------------------------------
+# Color Formatters (Wrappers)
+# ------------------------------------------------------------
 
-def green(text): return f"{Fore.GREEN}{text}{Style.RESET_ALL}" if USE_COLORS else text
-def bold_green(text): return f"{Style.BRIGHT}{Fore.GREEN}{text}{Style.RESET_ALL}" if USE_COLORS else text
-def dim_gray(text): return f"{Style.DIM}{Fore.LIGHTBLACK_EX}{text}{Style.RESET_ALL}" if USE_COLORS else text
-def cyan(text): return f"{Fore.CYAN}{text}{Style.RESET_ALL}" if USE_COLORS else text
-def yellow(text): return f"{Fore.YELLOW}{text}{Style.RESET_ALL}" if USE_COLORS else text
-def red(text): return f"{Fore.RED}{text}{Style.RESET_ALL}" if USE_COLORS else text
-def white(text): return f"{Fore.WHITE}{text}{Style.RESET_ALL}" if USE_COLORS else text
-def blue(text): return f"{Fore.BLUE}{text}{Style.RESET_ALL}" if USE_COLORS else text
+def green(text: str) -> str:
+    return f"{Fore.GREEN}{text}{Style.RESET_ALL}" if USE_COLORS else text
 
-# ─────────────────────────────────────────────────────
-# Message Style Printers (Log Style)
-# ─────────────────────────────────────────────────────
+def bold_green(text: str) -> str:
+    return f"{Style.BRIGHT}{Fore.GREEN}{text}{Style.RESET_ALL}" if USE_COLORS else text
 
-def print_info(msg, return_str=False):
+def dim_gray(text: str) -> str:
+    return f"{Style.DIM}{Fore.LIGHTBLACK_EX}{text}{Style.RESET_ALL}" if USE_COLORS else text
+
+def cyan(text: str) -> str:
+    return f"{Fore.CYAN}{text}{Style.RESET_ALL}" if USE_COLORS else text
+
+def yellow(text: str) -> str:
+    return f"{Fore.YELLOW}{text}{Style.RESET_ALL}" if USE_COLORS else text
+
+def red(text: str) -> str:
+    return f"{Fore.RED}{text}{Style.RESET_ALL}" if USE_COLORS else text
+
+def white(text: str) -> str:
+    return f"{Fore.WHITE}{text}{Style.RESET_ALL}" if USE_COLORS else text
+
+def blue(text: str) -> str:
+    return f"{Fore.BLUE}{text}{Style.RESET_ALL}" if USE_COLORS else text
+
+# ------------------------------------------------------------
+# Log-Style Print Helpers
+# ------------------------------------------------------------
+
+def print_info(msg: str, return_str: bool = False):
     text = f"{cyan('[INFO]')} {msg}"
     return text if return_str else print(text)
 
-def print_success(msg, return_str=False):
+def print_success(msg: str, return_str: bool = False):
     text = f"{green('[ OK ]')} {msg}"
     return text if return_str else print(text)
 
-def print_warning(msg, return_str=False):
+def print_warning(msg: str, return_str: bool = False):
     text = f"{yellow('[WARN]')} {msg}"
     return text if return_str else print(text)
 
-def print_error(msg, return_str=False):
+def print_error(msg: str, return_str: bool = False):
     text = f"{red('[FAIL]')} {msg}"
     return text if return_str else print(text)
 
-def print_debug(msg, return_str=False):
+def print_debug(msg: str, return_str: bool = False):
     text = f"{dim_gray('[DEBUG]')} {msg}"
     return text if return_str else print(text)
 
-# ─────────────────────────────────────────────────────
-# Title and Section Formatters
-# ─────────────────────────────────────────────────────
+# ------------------------------------------------------------
+# Banner and Section Headings
+# ------------------------------------------------------------
 
-def print_banner(title, width=60):
+def print_banner(title: str, width: int = 60):
     """
-    Prints a Matrix-style title banner.
+    Prints a stylized banner box.
     """
     border = "=" * width
     print()
@@ -75,44 +90,37 @@ def print_banner(title, width=60):
     print(bold_green(border))
     print()
 
-def print_section(title, width=60):
+def print_section(title: str, width: int = 60):
     """
-    Prints a section heading with underline.
+    Prints a section title with underline.
     """
     print()
     print(bold_green(title.upper()))
-    print(bold_green("-" * min(len(title), width)))
+    print(bold_green("-" * min(width, len(title))))
 
-def print_subheading(text, width=60):
+def print_subheading(text: str, width: int = 60):
     """
-    Prints a dim, subtle subheading.
+    Prints a dim-style subheading padded to width.
     """
     print(dim_gray(text.ljust(width)))
 
-# ─────────────────────────────────────────────────────
-# CLI Enhancers
-# ─────────────────────────────────────────────────────
+# ------------------------------------------------------------
+# CLI Prompts and Symbols
+# ------------------------------------------------------------
 
-def prompt_symbol():
-    """
-    Returns a stylized prompt prefix.
-    """
+def prompt_symbol() -> str:
     return bold_green(">>> ")
 
-def matrix_highlight(msg):
-    """
-    NSA-style visual highlight.
-    """
-    return bold_green(f"» {msg}")
+def matrix_highlight(msg: str) -> str:
+    return bold_green(f"> {msg}")
 
-def matrix_border(width=60):
-    return bold_green("■" * width)
+def matrix_border(width: int = 60) -> str:
+    return bold_green("#" * width)
 
-# ─────────────────────────────────────────────────────
-# Dynamic Toggle for Color Mode
-# ─────────────────────────────────────────────────────
+# ------------------------------------------------------------
+# Toggle Color Support
+# ------------------------------------------------------------
 
-def set_color_mode(enabled=True):
+def set_color_mode(enabled: bool = True) -> None:
     global USE_COLORS
     USE_COLORS = bool(enabled)
-

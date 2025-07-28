@@ -1,23 +1,33 @@
 @echo off
-setlocal
+setlocal ENABLEEXTENSIONS
 cls
-echo ---------------------------------------------
-echo   Stonehaven CLI Launcher
-echo ---------------------------------------------
 
-:: Handle optional --debug flag
+:: ASCII-style header
+echo ============================================================
+echo             Stonehaven CLI Launcher - Windows
+echo ============================================================
+
+:: Optional debug mode handling
 if "%1"=="--debug" (
     echo [INFO] Launching in DEBUG mode...
     python main.py --debug
 ) else (
+    echo [INFO] Launching application...
     python main.py
 )
 
-:: Show exit status
-if errorlevel 1 (
-    echo [ERROR] Application exited with errors.
+:: Exit code capture and status display
+set "EXIT_CODE=%ERRORLEVEL%"
+
+echo.
+if %EXIT_CODE% NEQ 0 (
+    echo [ERROR] Application exited with error code: %EXIT_CODE%
 ) else (
-    echo [OK] Application closed successfully.
+    echo [ OK ] Application closed successfully.
 )
 
-pause
+echo ------------------------------------------------------------
+echo   Press any key to exit the launcher...
+echo ------------------------------------------------------------
+pause >nul
+endlocal
