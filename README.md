@@ -1,12 +1,15 @@
 # Stonehaven Android Security Toolkit
 
-Stonehaven is a command-line suite for inspecting Android devices and APK files. It provides basic device interrogation via ADB and modular helpers for future static application analysis.
+Stonehaven is a command-line suite for inspecting Android devices and APK files. It provides device interrogation via ADB and extensible modules for static application analysis and forensic research.
 
 ## Features
 
 - Detect and list connected Android devices
 - Collect detailed device metadata (OS version, security posture, networking info)
 - Display device summaries in a readable table format
+- Static APK permission extraction and risk scoring
+- Security misconfiguration detection (API keys, cleartext traffic, storage)
+- CVSS v3.0 scoring utilities for reported issues
 - Structured logging with optional console output
 
 ## Requirements
@@ -30,10 +33,10 @@ Stonehaven is a command-line suite for inspecting Android devices and APK files.
 ## Project Layout
 
 ```
-App_Analysis/      # Placeholder modules for APK scanning
+App_Analysis/      # APK static analysis modules
 Database/          # Future database support
 Device_Analysis/   # Core device interaction modules
-Utils/             # CLI helpers and logging utilities
+Utils/             # CLI and security utilities
 Wiki/              # Additional text documentation
 ```
 
@@ -41,7 +44,7 @@ Wiki/              # Additional text documentation
 
 Stonehaven is an academic prototype. Planned improvements include:
 
-- Static APK permission analysis and hashing
+- Dynamic device traffic inspection
 - Database integration for result storage
 - Expanded network and forensic collection
 - CI-ready test suite and packaging
