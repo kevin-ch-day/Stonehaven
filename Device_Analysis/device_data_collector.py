@@ -40,6 +40,7 @@ def collect_full_device_info(base_device: dict) -> dict:
     # ─────────────────────────────────────────────
     _safe_set(device, {
         "shell_access": sec.test_shell_access,
+        "root_status": sec.check_root_status,
         "usb_debug": sec.get_usb_debug_status,
         "developer_mode": sec.is_developer_mode_enabled,
         "play_protect": sec.check_play_protect,
