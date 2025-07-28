@@ -5,15 +5,16 @@ import sys
 import time
 
 from Utils.app_utils import cli_colors, menu_utils, about_app, display_utils
+from Utils.app_utils import app_config
 from Utils.logging_utils import log_manager
 from Device_Analysis import check_device, connect_to_device
+from App_Analysis import apk_scanner
 
 # ------------------------------------------------------------
 # Global Configuration
 # ------------------------------------------------------------
 
 DEBUG = False
-APP_TITLE = "Stonehaven - Static Android Security Toolkit"
 
 # ------------------------------------------------------------
 # Startup and Session Initialization
@@ -23,7 +24,7 @@ def print_header():
     display_utils.print_divider("=")
     print("  Stonehaven CLI Launcher")
     display_utils.print_divider("-")
-    cli_colors.print_banner(APP_TITLE)
+    cli_colors.print_banner(app_config.BANNER)
     log_manager.log_info("Application launched.")
 
 def parse_args():
@@ -63,7 +64,7 @@ def handle_option(choice: str):
 
             case "3":
                 log_manager.log_info("User selected: Analyze Project Data")
-                cli_colors.print_info("Analyze Project Data — [TODO]")
+                apk_scanner.run_scan_menu()
 
             case "4":
                 log_manager.log_info("User selected: Application Utils")

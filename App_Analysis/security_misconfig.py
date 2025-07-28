@@ -1,6 +1,7 @@
 import os
 import re
 from typing import Generator
+from Utils.logging_utils import log_manager
 
 # ----------------------------------------------------------------------
 # Helpers
@@ -20,7 +21,8 @@ def _read_file(path: str) -> str:
     try:
         with open(path, 'r', encoding='utf-8', errors='ignore') as f:
             return f.read()
-    except Exception:
+    except Exception as e:
+        log_manager.log_exception(f"Failed to read {path}: {e}")
         return ""
 
 
@@ -52,8 +54,10 @@ def detect_cleartext_traffic(manifest_path: str, directory: str) -> bool:
             manifest = f.read()
             if 'usesCleartextTraffic="true"' in manifest:
                 return True
-    except Exception:
-        pass
+    except Exception as e:
+        log_manager.log_exception(
+            f"Failed to read manifest for cleartext check: {e}"
+        )
 
     for path in _iter_source_files(directory):
         if HTTP_REGEX.search(_read_file(path)):

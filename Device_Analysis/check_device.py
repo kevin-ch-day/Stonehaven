@@ -21,15 +21,18 @@ def run_device_check() -> int:
     log_manager.log_info("Initiating Android device check...")
 
     try:
-        devices = device_scanner.get_connected_devices()
+        scanner = device_scanner.DeviceScanner()
+        devices = scanner.scan()
 
         if not devices:
             cli_colors.print_warning("No Android devices detected.")
             log_manager.log_warning("No devices reported by ADB.")
             return 1
 
+        cli_colors.print_success(f"{len(devices)} device(s) successfully scanned.")
         device_display.render_device_table(devices)
         log_manager.log_info(f"{len(devices)} device(s) displayed.")
+        display_utils.print_timestamp("Check Finished")
         return 0
 
     except KeyboardInterrupt:

@@ -1,6 +1,7 @@
 import os
 import xml.etree.ElementTree as ET
 from collections import Counter
+from Utils.logging_utils import log_manager
 
 # ----------------------------------------------------------------------
 # Permission Extraction and Classification
@@ -61,8 +62,8 @@ def extract_permissions(manifest_path: str) -> list[str]:
             name = elem.get("{http://schemas.android.com/apk/res/android}name")
             if name:
                 perms.append(name)
-    except Exception:
-        pass
+    except Exception as e:
+        log_manager.log_exception(f"Failed to parse permissions from {manifest_path}: {e}")
     return perms
 
 
@@ -128,3 +129,24 @@ def permission_risk_score(
     ) else 0
     score = base + rarity + category_bonus
     return min(score, 10)
+
+
+def count_dangerous_permissions(perms: list[str]) -> int:
+    """Return the number of permissions classified as dangerous."""
+    return sum(1 for p in perms if classify_permission(p) == "dangerous")
+
+
+def detect_dangerous_combinations(perms: list[str]) -> list[str]:
+    """Identify suspicious permission combinations that may indicate abuse."""
+    perm_set = set(perms)
+    combos = []
+    if {"android.permission.SEND_SMS", "android.permission.READ_SMS"} <= perm_set:
+        combos.append("SMS read/send")
+    if {
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.READ_CONTACTS",
+    } <= perm_set:
+        combos.append("Location + Contacts")
+    if {"android.permission.CAMERA", "android.permission.RECORD_AUDIO"} <= perm_set:
+        combos.append("Camera + Microphone")
+    return combos

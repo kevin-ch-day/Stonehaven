@@ -8,7 +8,9 @@ Stonehaven is a command-line suite for inspecting Android devices and APK files.
 - Collect detailed device metadata (OS version, security posture, networking info)
 - Display device summaries in a readable table format
 - Static APK permission extraction and risk scoring
+- Detection of excessive or suspicious permission combinations
 - Security misconfiguration detection (API keys, cleartext traffic, storage)
+- CVSS-scored static scans of decompiled APK directories
 - CVSS v3.0 scoring utilities for reported issues
 - Structured logging with optional console output
 
@@ -16,6 +18,7 @@ Stonehaven is a command-line suite for inspecting Android devices and APK files.
 
 - Python 3.10+
 - [Android Platform Tools](https://developer.android.com/tools/releases/platform-tools) (ADB) available in your `PATH` or under `Utils/Platform_Tools`
+- Optionally set `STONEHAVEN_ADB_PATH` to specify a custom ADB executable
 - `colorama` Python package (installed via `requirements.txt`)
 
 ## Quick Start

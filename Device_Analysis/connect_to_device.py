@@ -16,12 +16,15 @@ def run():
     log_manager.log_info("User entered Connect to Device menu.")
 
     try:
-        devices = device_scanner.get_connected_devices()
+        scanner = device_scanner.DeviceScanner()
+        devices = scanner.scan()
 
         if not devices:
             cli_colors.print_warning("No Android devices found.")
             log_manager.log_warning("Device scan returned 0 results.")
             return
+
+        cli_colors.print_success(f"{len(devices)} device(s) successfully scanned.")
 
         _print_device_list(devices)
         valid_choices = _get_valid_choices(devices)
