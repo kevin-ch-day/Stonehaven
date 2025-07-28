@@ -3,10 +3,15 @@
 
 import subprocess
 import os
+import platform
 from Utils.app_utils import cli_colors
 from Utils.logging_utils import log_manager
 
-ADB_PATH = os.path.join("Utils", "Platform_Tools", "adb.exe")
+ADB_PATH = (
+    os.path.join("Utils", "Platform_Tools", "adb.exe")
+    if platform.system() == "Windows"
+    else "adb"
+)
 
 # ─────────────────────────────────────────────────────
 # Main Scanner Interface

@@ -60,7 +60,7 @@ def show_device_summary(device: dict):
     display_utils.print_status("Storage Mount Point", device.get("storage_mount", "Unknown"))
     display_utils.print_status("Storage Used", device.get("storage_used", "Unknown"))
     display_utils.print_status("Storage Free", device.get("storage_free", "Unknown"))
-    display_utils.print_status("Raw Storage Info", device.get("storage", "Unavailable"))
+    display_utils.print_status("Raw Storage Info", device.get("raw_storage_info", "Unavailable"))
     display_utils.print_spacer()
 
     # ─────────────────────────────
@@ -71,7 +71,7 @@ def show_device_summary(device: dict):
     display_utils.print_status("Charging Status", device.get("charging", "Unknown"))
     display_utils.print_status("Battery Health", device.get("battery_health", "Unknown"))
     display_utils.print_status("Temperature (°C)", device.get("battery_temp", "Unknown"))
-    display_utils.print_status("Raw Battery Info", device.get("battery", "Unavailable"))
+    display_utils.print_status("Raw Battery Info", device.get("raw_battery_info", "Unavailable"))
     display_utils.print_spacer()
 
     # ─────────────────────────────
