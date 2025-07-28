@@ -1,7 +1,13 @@
 # connect_to_device.py
+# Main interface for connecting and interacting with Android devices
 
 import time
-from Device_Analysis import device_scanner, device_display, device_summary, device_inspector
+from Device_Analysis import (
+    device_scanner,
+    device_display,
+    device_summary,
+    device_data_collector,
+)
 from Utils.app_utils import cli_colors, display_utils, menu_utils
 from Utils.logging_utils import log_manager
 
@@ -13,8 +19,8 @@ def run():
         devices = device_scanner.get_connected_devices()
 
         if not devices:
-            cli_colors.print_warning("No devices available for connection.")
-            log_manager.log_warning("No connected devices found.")
+            cli_colors.print_warning("No Android devices found.")
+            log_manager.log_warning("Device scan returned 0 results.")
             return
 
         _print_device_list(devices)
@@ -26,10 +32,18 @@ def run():
             return
 
         selected_device = devices[int(user_choice) - 1]
-        cli_colors.print_success(f"Connected to: {selected_device['model']} [{selected_device['serial']}]")
-        log_manager.log_info(f"Device selected: {selected_device}")
+        log_manager.log_info(f"Selected device: {selected_device}")
 
-        _launch_device_menu(selected_device)
+        cli_colors.print_success(
+            f"Connected to {selected_device['model']} [{selected_device['serial']}]"
+        )
+
+        # Enrich device metadata using collector
+        cli_colors.print_info("Collecting detailed device info...")
+        full_device = device_data_collector.collect_full_device_info(selected_device)
+        log_manager.log_info(f"Collected metadata for device: {full_device}")
+
+        _launch_device_menu(full_device)
 
     except Exception as e:
         cli_colors.print_error("Failed to connect to device.")
@@ -44,14 +58,14 @@ def _print_device_list(devices):
     cli_colors.print_info(f"{len(devices)} Android device(s) detected:\n")
     device_display.render_device_table(devices)
     cli_colors.print_section("Device Selection")
-    print("Enter device number to connect or 0 to return to main menu:")
+    print("Enter the number of the device to connect, or 0 to return to main menu.")
 
 def _get_valid_choices(devices):
     return {str(i + 1) for i in range(len(devices))}.union({"0"})
 
 def _launch_device_menu(device):
     cli_colors.print_banner(f"Device Menu - {device['model']}")
-    log_manager.log_info("Entered device-specific menu.")
+    log_manager.log_info("Launched device-specific menu.")
     session_start = time.time()
 
     while True:
@@ -67,16 +81,18 @@ def _launch_device_menu(device):
 
         match user_choice:
             case "1":
+                log_manager.log_info("Option: Show device summary selected.")
                 device_summary.show_device_summary(device)
-                device_inspector.show_advanced_insights(device['serial'])
             case "2":
-                cli_colors.print_info("APK scan coming soon.")
+                cli_colors.print_info("APK scan feature coming soon.")
+                log_manager.log_info("Option: APK scan selected. (TODO)")
             case "3":
-                cli_colors.print_info("Data pull coming soon.")
+                cli_colors.print_info("Data extraction coming soon.")
+                log_manager.log_info("Option: Pull data from device selected. (TODO)")
             case "0":
                 elapsed = round(time.time() - session_start, 2)
                 log_manager.log_info(f"Exited device menu after {elapsed} seconds.")
                 cli_colors.print_info("Returning to main menu.")
                 break
             case _:
-                cli_colors.print_warning("Invalid choice. Try again.")
+                cli_colors.print_warning("Invalid choice. Please try again.")

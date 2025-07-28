@@ -9,10 +9,12 @@ from Utils.logging_utils import log_manager
 # Main Entry Point for Device Scan
 # ─────────────────────────────────────────────────────
 
-def run_device_check():
+def run_device_check() -> int:
     """
     Scan and display connected Android devices using ADB.
-    Useful for pre-analysis staging and selection menus.
+
+    Returns:
+        int: Exit code (0 = success, 1 = failure or no devices)
     """
     display_utils.print_section_title("Device Check")
     display_utils.print_timestamp("Check Started")
@@ -24,15 +26,18 @@ def run_device_check():
         if not devices:
             cli_colors.print_warning("No Android devices detected.")
             log_manager.log_warning("No devices reported by ADB.")
-            return
+            return 1
 
         device_display.render_device_table(devices)
+        log_manager.log_info(f"{len(devices)} device(s) displayed.")
+        return 0
 
     except KeyboardInterrupt:
         cli_colors.print_warning("Device check cancelled by user.")
         log_manager.log_warning("User interrupted device check.")
-    
-    except Exception as e:
-        cli_colors.print_error("An error occurred during device scan.")
-        log_manager.log_exception(f"run_device_check() failed: {str(e)}")
+        return 1
 
+    except Exception as e:
+        cli_colors.print_error("An unexpected error occurred during device scan.")
+        log_manager.log_exception(f"run_device_check() failed: {str(e)}")
+        return 1

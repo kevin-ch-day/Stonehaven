@@ -2,6 +2,7 @@
 # Displays a formatted NSA-style table of connected Android devices
 
 from Utils.app_utils import cli_colors, display_utils
+import textwrap
 
 # ─────────────────────────────────────────────────────
 # Column Layout Settings
@@ -36,7 +37,8 @@ def render_device_table(device_list: list[dict], title: str = "Connected Android
         return
 
     display_utils.print_spacer()
-    cli_colors.print_info(f"{len(device_list)} Android device(s) detected:\n")
+    cli_colors.print_banner(f"{title}")
+    cli_colors.print_info(f"{len(device_list)} device(s) detected:\n")
 
     # Header + Divider
     header = " ".join(f"{col:<{COLUMN_WIDTHS[col]}}" for col in COLUMNS)
@@ -46,12 +48,16 @@ def render_device_table(device_list: list[dict], title: str = "Connected Android
 
     # Rows
     for idx, device in enumerate(device_list, start=1):
-        row = f"{idx:<{COLUMN_WIDTHS['No.']}} " \
-              f"{device['serial']:<{COLUMN_WIDTHS['Serial']}} " \
-              f"{device['brand']:<{COLUMN_WIDTHS['Brand']}} " \
-              f"{_shorten(device['model'], COLUMN_WIDTHS['Model']):<{COLUMN_WIDTHS['Model']}} " \
-              f"{device['android']:<{COLUMN_WIDTHS['Android']}} " \
-              f"{device['abi']:<{COLUMN_WIDTHS['ABI']}}"
+        row_data = {
+            "No.": str(idx),
+            "Serial": device.get("serial", "N/A"),
+            "Brand": device.get("brand", "N/A"),
+            "Model": _shorten(device.get("model", "N/A"), COLUMN_WIDTHS["Model"]),
+            "Android": device.get("android", "N/A"),
+            "ABI": device.get("abi", "N/A")
+        }
+
+        row = " ".join(f"{row_data[col]:<{COLUMN_WIDTHS[col]}}" for col in COLUMNS)
         print(cli_colors.cyan(row))
 
     display_utils.print_spacer()
@@ -62,4 +68,9 @@ def render_device_table(device_list: list[dict], title: str = "Connected Android
 
 def _shorten(text: str, limit: int) -> str:
     """Trim text to fit within column width, append '…' if trimmed."""
-    return text if len(text) <= limit else text[:limit - 1] + "…"
+    if len(text) <= limit:
+        return text
+    try:
+        return textwrap.shorten(text, width=limit, placeholder="…")
+    except Exception:
+        return text[:limit - 1] + "…"
