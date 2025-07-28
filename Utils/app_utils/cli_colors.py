@@ -12,15 +12,19 @@ USE_COLORS = os.environ.get("NO_COLOR") is None
 
 try:
     if USE_COLORS:
-        from colorama import Fore, Back, Style, init as colorama_init
+        from colorama import Fore as _Fore, Back as _Back, Style as _Style, init as colorama_init
         colorama_init(autoreset=True)
+        Fore, Back, Style = _Fore, _Back, _Style
+    else:
+        raise ImportError
 except Exception:
     USE_COLORS = False
 
-# Fallback if colorama is not available
 if not USE_COLORS:
     class _NoColor:
-        def __getattr__(self, attr): return ""
+        def __getattr__(self, attr):
+            return ""
+
     Fore = Back = Style = _NoColor()
 
 # ------------------------------------------------------------

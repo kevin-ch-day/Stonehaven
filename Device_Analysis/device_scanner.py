@@ -4,6 +4,7 @@
 import subprocess
 import os
 import platform
+import shutil
 from Utils.app_utils import cli_colors
 from Utils.logging_utils import log_manager
 
@@ -25,9 +26,9 @@ def get_connected_devices() -> list[dict]:
         list of dicts with keys:
         'serial', 'brand', 'model', 'android', 'abi'
     """
-    if not os.path.isfile(ADB_PATH):
-        cli_colors.print_error("ADB not found at expected path.")
-        log_manager.log_error("adb.exe is missing in Platform_Tools.")
+    if not shutil.which(ADB_PATH):
+        cli_colors.print_error("ADB executable not found.")
+        log_manager.log_error("ADB executable missing or not in PATH.")
         return []
 
     try:
