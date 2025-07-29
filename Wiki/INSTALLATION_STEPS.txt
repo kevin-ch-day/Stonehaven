@@ -1,0 +1,31 @@
+============================================================
+                  Installation Steps
+============================================================
+
+Follow these steps to set up the toolkit on a new system.
+
+1. Install Python 3.10 or later.
+2. Clone the repository and change into the project folder.
+3. (Optional) Create a virtual environment and activate it.
+4. Install dependencies:
+       pip install -r requirements.txt
+5. Ensure ADB is available in your PATH or use the bundled
+   binaries under Utils/Platform_Tools.
+6. Run the application:
+       python main.py
+7. Windows users may instead run 'run_app.bat' for a
+   simplified launch experience.
+8. Linux users should ensure their account has permission
+   to access USB devices (e.g. add to the 'plugdev' group).
+9. Confirm your Python version:
+       python --version
+10. (Optional) Verify the code compiles:
+       python -m py_compile $(git ls-files '*.py')
+
+------------------------------------------------------------
+Troubleshooting
+------------------------------------------------------------
+
+If you encounter missing package errors, re-run the pip
+installation step. Verify that your device is connected and
+USB debugging is enabled before running device scans.
