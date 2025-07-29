@@ -12,6 +12,7 @@ Stonehaven is a command-line suite for inspecting Android devices and APK files.
 - Static APK permission extraction and risk scoring
 - Detection of excessive or suspicious permission combinations
 - Security misconfiguration detection (API keys, cleartext traffic, storage)
+- Fast SHA-256 hashing of APK files for integrity checks
 - CVSS-scored static scans of decompiled APK directories
 - CVSS v3.0 scoring utilities for reported issues
 - Export scan reports to Markdown and CSV
@@ -38,6 +39,13 @@ Stonehaven is a command-line suite for inspecting Android devices and APK files.
    python main.py
    ```
 3. Use the menu to scan for devices or connect to a device for a detailed summary.
+4. Compute an APK hash:
+   ```bash
+   python -c "from App_Analysis.apk_hashing import calculate_apk_hash; print(calculate_apk_hash('myapp.apk'))"
+   ```
+   The digest can be stored alongside your build or manifest version
+   number to quickly detect unexpected changes in future releases.
+
 
 ## Project Layout
 
