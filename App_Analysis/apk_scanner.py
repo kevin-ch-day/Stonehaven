@@ -4,10 +4,11 @@
 import os
 import csv
 from Utils.logging_utils import log_manager
-from Utils.app_utils import cli_colors, display_utils
+from Utils.app_utils import cli_colors, display_utils, menu_utils
 from Utils.security_utils import cvss
 from . import apk_permission_analysis as perm
 from . import security_misconfig as misconfig
+from . import apk_baseline
 
 # ----------------------------------------------------------------------
 # CVSS Vectors for Common Findings
@@ -183,9 +184,8 @@ def export_csv(report: dict, path: str) -> None:
 
 
 @log_manager.log_call("info")
-def run_scan_menu() -> None:
-    """CLI wrapper for scanning a user-supplied directory."""
-    display_utils.print_section_title("Static APK Analyzer")
+def _run_single_scan() -> None:
+    """Prompt for a path and run a single APK scan."""
     path = input(cli_colors.cyan("Enter path to decompiled APK directory: ")).strip()
     if not path:
         cli_colors.print_warning("No directory provided.")
@@ -207,3 +207,23 @@ def run_scan_menu() -> None:
         else:
             cli_colors.print_warning("No output path provided. Skipping save.")
     log_manager.log_info("APK scan completed")
+
+
+@log_manager.log_call("info")
+def run_scan_menu() -> None:
+    """CLI wrapper for APK analysis options."""
+    display_utils.print_section_title("Static APK Analyzer")
+    options = {
+        "1": "Scan a single decompiled APK",
+        "2": "Baseline analysis of APK directory",
+        "0": "Return",
+    }
+    valid = set(options.keys())
+    menu_utils.display_menu("APK Analysis", options)
+    choice = menu_utils.get_user_choice(valid)
+    if choice == "1":
+        _run_single_scan()
+    elif choice == "2":
+        apk_baseline.run_baseline_menu()
+    else:
+        return
