@@ -19,6 +19,7 @@ class DeviceScanner:
     def __init__(self, adb_path: str = ADB_PATH):
         self.adb_path = adb_path
 
+    @log_manager.log_call("info")
     def scan(self) -> list[dict]:
         """Return a list of detected Android devices with basic properties."""
         if not shutil.which(self.adb_path):

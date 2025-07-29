@@ -2,6 +2,7 @@
 # Orchestrates static analysis checks on a decompiled APK directory
 
 import os
+import csv
 from Utils.logging_utils import log_manager
 from Utils.app_utils import cli_colors, display_utils
 from Utils.security_utils import cvss
@@ -18,6 +19,7 @@ WEAK_CRYPTO_VECTOR = "AV:N/AC:H/PR:N/UI:N/S:U/C:M/I:N/A:N"
 EXCESSIVE_PERMISSION_VECTOR = "AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N"
 
 
+@log_manager.log_call("info")
 def scan_directory(directory: str) -> dict:
     """Run all static checks on the specified APK folder."""
     report = {"findings": []}
@@ -135,6 +137,52 @@ def print_report(report: dict) -> None:
     display_utils.print_spacer()
 
 
+def export_markdown(report: dict, path: str) -> None:
+    """Save the report to a Markdown file."""
+    try:
+        with open(path, "w", encoding="utf-8") as md:
+            md.write("# APK Scan Report\n\n")
+            md.write("## Permissions\n")
+            for perm_name, ptype in report.get("permissions", {}).items():
+                score = report.get("permission_scores", {}).get(perm_name, 0)
+                md.write(f"- **{perm_name}** ({ptype}, risk {score}/10)\n")
+
+            if report.get("findings"):
+                md.write("\n## Findings\n")
+                for f in report["findings"]:
+                    md.write(
+                        f"- **{f['issue']}** (CVSS {f['score']} {f['severity']})\n"
+                    )
+                    if evidence := f.get("evidence"):
+                        if isinstance(evidence, list):
+                            for path in evidence:
+                                md.write(f"  - {path}\n")
+                        else:
+                            md.write(f"  - {evidence}\n")
+    except Exception as e:
+        log_manager.log_exception(f"Failed to export Markdown report: {e}")
+
+
+def export_csv(report: dict, path: str) -> None:
+    """Save the report to a CSV file for spreadsheet use."""
+    try:
+        with open(path, "w", newline="", encoding="utf-8") as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(["Permission", "Type", "Risk Score"])
+            for perm_name, ptype in report.get("permissions", {}).items():
+                score = report.get("permission_scores", {}).get(perm_name, 0)
+                writer.writerow([perm_name, ptype, score])
+
+            writer.writerow([])
+            writer.writerow(["Issue", "CVSS Score", "Severity", "Evidence"])
+            for f in report.get("findings", []):
+                evidence = "; ".join(f.get("evidence", [])) if isinstance(f.get("evidence"), list) else f.get("evidence", "")
+                writer.writerow([f["issue"], f["score"], f["severity"], evidence])
+    except Exception as e:
+        log_manager.log_exception(f"Failed to export CSV report: {e}")
+
+
+@log_manager.log_call("info")
 def run_scan_menu() -> None:
     """CLI wrapper for scanning a user-supplied directory."""
     display_utils.print_section_title("Static APK Analyzer")
@@ -149,4 +197,13 @@ def run_scan_menu() -> None:
     log_manager.log_info(f"Scanning APK directory: {path}")
     report = scan_directory(path)
     print_report(report)
+    save = input(cli_colors.cyan("Save report to file? (y/N): ")).strip().lower()
+    if save == "y":
+        out_base = input(cli_colors.cyan("Enter output file path (without extension): ")).strip()
+        if out_base:
+            export_markdown(report, f"{out_base}.md")
+            export_csv(report, f"{out_base}.csv")
+            cli_colors.print_success(f"Report saved to {out_base}.md and {out_base}.csv")
+        else:
+            cli_colors.print_warning("No output path provided. Skipping save.")
     log_manager.log_info("APK scan completed")

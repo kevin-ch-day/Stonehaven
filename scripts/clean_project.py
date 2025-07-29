@@ -4,6 +4,7 @@
 import os
 import fnmatch
 import sys
+from Utils.logging_utils import log_manager
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, os.pardir))
@@ -24,12 +25,21 @@ CLEANUP_TARGETS = {
 # LOGGING
 # ─────────────────────────────────────────────
 def log_action(message: str, level: str = "INFO"):
-    prefix = {
-        "INFO": "[✔]",
-        "WARN": "[!]",
-        "ERROR": "[✖]"
-    }.get(level.upper(), "[ ]")
-    print(f"{prefix} {message}")
+    """Log and optionally display cleanup actions."""
+    level = level.upper()
+    log_fn = {
+        "INFO": log_manager.log_info,
+        "WARN": log_manager.log_warning,
+        "ERROR": log_manager.log_error,
+    }.get(level, log_manager.log_info)
+    log_fn(message)
+    if VERBOSE:
+        prefix = {
+            "INFO": "[✔]",
+            "WARN": "[!]",
+            "ERROR": "[✖]",
+        }.get(level, "[ ]")
+        print(f"{prefix} {message}")
 
 # ─────────────────────────────────────────────
 # FILE CLEANING

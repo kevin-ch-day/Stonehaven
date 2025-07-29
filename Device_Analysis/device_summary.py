@@ -49,6 +49,10 @@ def show_device_summary(device: dict):
     display_utils.print_status("Mobile Data Enabled", device.get("mobile_data", "Unknown"))
     display_utils.print_status("WiFi SSID", device.get("wifi_ssid", "Unknown"))
     display_utils.print_status("Signal Strength", device.get("signal_strength", "Unknown"))
+    display_utils.print_status("Gateway", device.get("gateway", "Unknown"))
+    display_utils.print_status("DNS Servers", device.get("dns_servers", "Unknown"))
+    display_utils.print_status("Network Type", device.get("network_type", "Unknown"))
+    display_utils.print_status("WiFi Link Speed", device.get("wifi_link_speed", "Unknown"))
     display_utils.print_spacer()
 
     # ─────────────────────────────
@@ -58,8 +62,17 @@ def show_device_summary(device: dict):
     display_utils.print_status("Installed App Count", device.get("app_count", "N/A"))
     display_utils.print_status("Known Antivirus Apps", device.get("antivirus_detected", "Unknown"))
     display_utils.print_status("Storage Mount Point", device.get("storage_mount", "Unknown"))
-    display_utils.print_status("Storage Used", device.get("storage_used", "Unknown"))
-    display_utils.print_status("Storage Free", device.get("storage_free", "Unknown"))
+    used = device.get("storage_used", "Unknown")
+    free = device.get("storage_free", "Unknown")
+    try:
+        from Utils.app_utils import format_utils
+        used_disp = format_utils.human_readable_size(used)
+        free_disp = format_utils.human_readable_size(free)
+    except Exception:
+        used_disp = used
+        free_disp = free
+    display_utils.print_status("Storage Used", used_disp)
+    display_utils.print_status("Storage Free", free_disp)
     display_utils.print_status("Raw Storage Info", device.get("raw_storage_info", "Unavailable"))
     display_utils.print_spacer()
 
