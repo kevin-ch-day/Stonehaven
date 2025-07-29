@@ -1,0 +1,110 @@
+============================================================
+                     Tool Overview
+============================================================
+
+This document summarizes the purpose of each major module in the
+Stonehaven Android Security Toolkit.
+
+------------------------------------------------------------
+1. Main Application
+------------------------------------------------------------
+
+- main.py
+  Entry point launching the CLI and routing to analysis modules.
+
+- run_app.bat / setup_app.bat
+  Convenience scripts for Windows usage.
+
+------------------------------------------------------------
+2. Device_Analysis Package
+------------------------------------------------------------
+
+- check_device.py
+  Scans for connected Android devices.
+
+- connect_to_device.py
+  Establishes an ADB session with a device.
+
+- device_data_collector.py
+  Gathers metadata and system information.
+
+- device_display.py
+  Renders device data in table form.
+
+- device_inspector_core.py
+  Core interrogation helpers for a device.
+
+- device_inspector_network.py
+  Network-focused checks such as DNS inspection.
+
+- device_inspector_security.py
+  Reviews security posture of the device.
+
+- device_scanner.py
+  Wraps ADB calls to enumerate attached devices.
+
+- device_summary.py
+  Pretty summary output for a selected device.
+
+------------------------------------------------------------
+3. App_Analysis Package
+------------------------------------------------------------
+
+- apk_scanner.py
+  Orchestrates all static APK checks.
+
+- apk_permission_analysis.py
+  Rates permission risk and finds risky combinations.
+
+- security_misconfig.py
+  Searches decompiled apps for insecure settings.
+
+- apk_hashing.py
+  Utility for calculating APK hashes.
+
+------------------------------------------------------------
+4. Utils Package
+------------------------------------------------------------
+
+- app_utils/
+  CLI helpers, formatting utilities and application banner.
+  * about_app.py - shows toolkit information and version
+  * display_utils.py - renders formatted tables
+  * menu_utils.py - controls the interactive menus
+
+- logging_utils/
+  Configures logging and exposes convenience wrappers.
+  * log_config.py - default logging configuration
+  * log_engine.py - simple helpers for file logging
+  * log_manager.py - central interface for log setup
+
+- security_utils/
+  Contains CVSS scoring helper for risk ratings.
+  * cvss.py - calculates severity scores for vulnerabilities
+
+- Platform_Tools/
+  Bundled ADB and fastboot binaries.
+  Use these if the Android SDK tools are not already installed.
+
+------------------------------------------------------------
+5. Database Package
+------------------------------------------------------------
+
+- db_config.py, db_conn.py, db_engine.py
+  Placeholders for future database integration.
+
+------------------------------------------------------------
+6. scripts/
+------------------------------------------------------------
+
+- clean_project.py
+  Removes temporary files and logs from the repository.
+
+------------------------------------------------------------
+7. Other Resources
+------------------------------------------------------------
+
+- requirements.txt
+  Lists Python dependencies for the toolkit.
+- README.md
+  Introductory documentation and feature overview.

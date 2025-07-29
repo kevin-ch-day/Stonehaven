@@ -1,0 +1,34 @@
+============================================================
+                    Version History
+============================================================
+
+Stonehaven is under active development. The following list
+summarizes major milestones.
+
+------------------------------------------------------------
+v0.1.0 - Initial Prototype
+------------------------------------------------------------
+- Basic CLI launcher and menu system.
+- Device enumeration using ADB.
+- Early APK permission scanning.
+
+------------------------------------------------------------
+v0.2.0 - Analysis Expansion
+------------------------------------------------------------
+- Added security misconfiguration checks.
+- Introduced CVSS scoring utilities.
+- Improved logging with file output.
+
+------------------------------------------------------------
+v0.3.0 - Documentation Refresh
+------------------------------------------------------------
+- Added Wiki text files and installation guide.
+- Consolidated helper utilities.
+- Prepared codebase for database integration.
+
+------------------------------------------------------------
+v0.4.0 - Toolkit Enhancements
+------------------------------------------------------------
+- Expanded Wiki documentation with detailed module notes.
+- Added Linux-specific setup instructions.
+- Minor refactoring and cleanup.

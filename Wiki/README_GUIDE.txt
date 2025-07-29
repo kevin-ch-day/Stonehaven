@@ -19,6 +19,9 @@ Contents of This Folder
 3. VERSION_HISTORY.txt
    - A changelog of major updates across Stonehaven versions.
 
+4. INSTALLATION_STEPS.txt
+   - Step-by-step instructions to set up the toolkit.
+
 ------------------------------------------------------------
 Purpose of This Folder
 ------------------------------------------------------------
