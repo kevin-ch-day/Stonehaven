@@ -38,6 +38,11 @@ def show_about():
     print("   - Hash integrity verification (SHA256)")
     print("   - Integration with ADB and platform-tools")
     print("   - Modular design for extensibility")
+    print("  Example hash check:")
+    print("    >>> from App_Analysis.apk_hashing import calculate_apk_hash")
+    print("    >>> calculate_apk_hash('myapp.apk')")
+    print("    # store this hash with the manifest version to detect changes")
+
 
     display_utils.print_spacer()
 
