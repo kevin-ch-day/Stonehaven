@@ -4,6 +4,7 @@
 import os
 import logging
 from logging.handlers import RotatingFileHandler
+from Utils.app_utils import cli_colors
 from . import log_config
 
 class LogEngine:
@@ -14,6 +15,8 @@ class LogEngine:
 
     def __init__(self, logger_name="stonehaven_logger"):
         self.logger = logging.getLogger(logger_name)
+        self.console_handler = None
+        self.file_handler = None
         self.logger.setLevel(log_config.LOG_LEVEL)
         self._setup_handlers()
 
@@ -24,15 +27,16 @@ class LogEngine:
 
         os.makedirs(log_config.LOG_DIR, exist_ok=True)
 
-        file_handler = self._create_file_handler()
-        file_handler.setFormatter(self._get_formatter())
-        self.logger.addHandler(file_handler)
+        self.file_handler = self._create_file_handler()
+        self.file_handler.setFormatter(self._get_formatter())
+        self.file_handler.setLevel(self.logger.level)
+        self.logger.addHandler(self.file_handler)
 
         if log_config.LOG_TO_CONSOLE:
-            console_handler = logging.StreamHandler()
-            console_handler.setLevel(log_config.LOG_LEVEL)
-            console_handler.setFormatter(self._get_formatter())
-            self.logger.addHandler(console_handler)
+            self.console_handler = logging.StreamHandler()
+            self.console_handler.setLevel(self.logger.level)
+            self.console_handler.setFormatter(self._get_formatter(color=True))
+            self.logger.addHandler(self.console_handler)
 
     def _create_file_handler(self):
         """Create a file or rotating file handler."""
@@ -45,12 +49,30 @@ class LogEngine:
             )
         return logging.FileHandler(log_config.LOG_FILE_PATH, encoding='utf-8')
 
-    def _get_formatter(self):
-        """Return a log formatter using standard format and date format."""
-        return logging.Formatter(
+    def _get_formatter(self, color: bool = False):
+        """Return a log formatter. Colorized when requested."""
+        base = logging.Formatter(
             fmt=log_config.LOG_FORMAT,
             datefmt=log_config.DATE_FORMAT
         )
+        if not color or not cli_colors.USE_COLORS:
+            return base
+
+        class ColorFormatter(logging.Formatter):
+            LEVEL_COLORS = {
+                logging.DEBUG: cli_colors.dim_gray,
+                logging.INFO: cli_colors.cyan,
+                logging.WARNING: cli_colors.yellow,
+                logging.ERROR: cli_colors.red,
+                logging.CRITICAL: cli_colors.red,
+            }
+
+            def format(self, record):
+                msg = super().format(record)
+                color_func = self.LEVEL_COLORS.get(record.levelno)
+                return color_func(msg) if color_func else msg
+
+        return ColorFormatter(log_config.LOG_FORMAT, log_config.DATE_FORMAT)
 
     def get_logger(self):
         """Return the configured logger instance."""
@@ -75,6 +97,29 @@ class LogEngine:
     def exception(self, msg: str):
         """Log an exception with traceback (used in except blocks)."""
         self.logger.exception(msg)
+
+    # ------------------------------------------------------------------
+    # Runtime Configuration
+    # ------------------------------------------------------------------
+    def set_level(self, level: str) -> None:
+        """Dynamically adjust logging level."""
+        lvl = getattr(logging, level.upper(), logging.INFO)
+        self.logger.setLevel(lvl)
+        if self.file_handler:
+            self.file_handler.setLevel(lvl)
+        if self.console_handler:
+            self.console_handler.setLevel(lvl)
+
+    def enable_console(self, enabled: bool = True) -> None:
+        """Enable or disable console logging at runtime."""
+        if enabled and not self.console_handler:
+            self.console_handler = logging.StreamHandler()
+            self.console_handler.setLevel(self.logger.level)
+            self.console_handler.setFormatter(self._get_formatter(color=True))
+            self.logger.addHandler(self.console_handler)
+        elif not enabled and self.console_handler:
+            self.logger.removeHandler(self.console_handler)
+            self.console_handler = None
 
 
 # Optional accessor for shared logger instance

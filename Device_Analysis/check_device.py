@@ -9,6 +9,7 @@ from Utils.logging_utils import log_manager
 # Main Entry Point for Device Scan
 # ─────────────────────────────────────────────────────
 
+@log_manager.log_call("info")
 def run_device_check() -> int:
     """
     Scan and display connected Android devices using ADB.

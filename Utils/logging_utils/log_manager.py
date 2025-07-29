@@ -2,6 +2,8 @@
 # Centralized logging manager for Stonehaven
 
 import os
+import time
+from functools import wraps
 from . import log_config, log_engine
 
 # ─────────────────────────────────────────────────────
@@ -14,6 +16,15 @@ os.makedirs(log_config.LOG_DIR, exist_ok=True)
 # ─────────────────────────────────────────────────────
 _logger_instance = log_engine.LogEngine()
 logger = _logger_instance.get_logger()
+
+def set_log_level(level: str) -> None:
+    """Update the global logger level at runtime."""
+    _logger_instance.set_level(level)
+
+
+def enable_console_logging(enabled: bool = True) -> None:
+    """Toggle console logging output."""
+    _logger_instance.enable_console(enabled)
 
 # ─────────────────────────────────────────────────────
 # Global Logging Utility Functions
@@ -67,3 +78,27 @@ def log_banner(msg: str):
     logger.info(border)
     logger.info(msg.center(60))
     logger.info(border)
+
+
+def log_call(level: str = "debug"):
+    """Decorator to log a function's execution."""
+
+    def decorator(func):
+        log_fn = getattr(logger, level, logger.debug)
+
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            log_fn(f"Entering {func.__name__}")
+            start = time.perf_counter()
+            try:
+                result = func(*args, **kwargs)
+                elapsed = time.perf_counter() - start
+                log_fn(f"Exiting {func.__name__} (took {elapsed:.2f}s)")
+                return result
+            except Exception:
+                logger.exception(f"Exception in {func.__name__}")
+                raise
+
+        return wrapper
+
+    return decorator

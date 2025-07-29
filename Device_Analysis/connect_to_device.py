@@ -11,6 +11,7 @@ from Device_Analysis import (
 from Utils.app_utils import cli_colors, display_utils, menu_utils
 from Utils.logging_utils import log_manager
 
+@log_manager.log_call("info")
 def run():
     _print_header()
     log_manager.log_info("User entered Connect to Device menu.")

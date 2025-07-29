@@ -8,6 +8,7 @@ from Device_Analysis import (
 )
 from Utils.logging_utils import log_manager
 
+@log_manager.log_call("info")
 def collect_full_device_info(base_device: dict) -> dict:
     """
     Enriches the base metadata of an Android device with advanced runtime,
@@ -60,6 +61,10 @@ def collect_full_device_info(base_device: dict) -> dict:
         "mobile_data": net.get_mobile_data_status,
         "wifi_ssid": net.get_wifi_ssid,
         "signal_strength": net.get_signal_strength,
+        "gateway": net.get_default_gateway,
+        "dns_servers": net.get_dns_servers,
+        "network_type": net.get_network_type,
+        "wifi_link_speed": net.get_wifi_link_speed,
     }, serial)
 
     # ─────────────────────────────────────────────
